@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Data Connector - Web UI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #0066cc;
+            --secondary-color: #f0f0f0;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .container-main {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 1.5rem;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 5px;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #6a4190 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .nav-tabs .nav-link {
+            color: #666;
+            border: none;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .nav-tabs .nav-link.active {
+            border-color: #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+
+        .alert {
+            border-radius: 5px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .response-box {
+            background: #f5f5f5;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .feature-list li:before {
+            content: "✓ ";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .api-key-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 1rem;
+            border-radius: 5px;
+            word-break: break-all;
+            font-family: monospace;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-badge.enabled {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-badge.disabled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .spinner {
+            display: inline-block;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        .api-key-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .auth-header {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <span class="navbar-brand">
+                <i class="bi bi-database"></i> Universal Data Connector
+            </span>
+            <span class="text-white">Web UI & Testing Dashboard</span>
+        </div>
+    </nav>
+
+    <div class="container container-main">
+        <!-- API Key Section -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6><i class="bi bi-key"></i> API Key Authentication</h6>
+                        <p class="text-muted small">Enter your API key for authenticated requests. Generate one below if you don't have one.</p>
+                        <div class="input-group">
+                            <input type="text" id="api-key-input" class="form-control" placeholder="Enter your API key (uk_...)">
+                            <button class="btn btn-outline-secondary" type="button" onclick="saveApiKey()">
+                                <i class="bi bi-save"></i> Save Key
+                            </button>
+                            <button class="btn btn-outline-danger" type="button" onclick="clearApiKey()">
+                                <i class="bi bi-x-circle"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div id="key-status" class="mt-2 mt-md-0">
+                            <span class="badge bg-warning">No API Key Set</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">Caching</h6>
+                        <span id="cache-status" class="status-badge enabled">Enabled</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">Rate Limiting</h6>
+                        <span id="ratelimit-status" class="status-badge enabled">Enabled</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">Authentication</h6>
+                        <span id="auth-status" class="status-badge enabled">Enabled</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">Webhooks</h6>
+                        <span id="webhook-status" class="status-badge enabled">Enabled</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Tabs -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-gear"></i> API Testing</h5>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#data">Data Endpoints</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#auth">Authentication</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#export">Export Data</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#webhooks">Webhooks</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#cache">Cache Management</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content mt-4">
+                    <!-- Data Endpoints Tab -->
+                    <div id="data" class="tab-pane fade show active">
+                        <h5>Query Data Sources</h5>
+                        <p class="text-muted">Test the core data endpoints with caching.</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Data Source</label>
+                                    <select id="data-source" class="form-select">
+                                        <option value="customers">Customers (CRM)</option>
+                                        <option value="support-tickets">Support Tickets</option>
+                                        <option value="analytics">Analytics Metrics</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Limit</label>
+                                    <input id="data-limit" type="number" class="form-control" value="5" min="1" max="100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="fetchData()">
+                            <i class="bi bi-arrow-repeat"></i> Fetch Data
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearResponse('data-response')">
+                            <i class="bi bi-trash"></i> Clear
+                        </button>
+
+                        <div id="data-response" class="mt-4"></div>
+                    </div>
+
+                    <!-- Authentication Tab -->
+                    <div id="auth" class="tab-pane fade">
+                        <h5>API Key Management</h5>
+                        <p class="text-muted">Generate and manage API keys for authentication.</p>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">API Key Name</label>
+                                    <input id="key-name" type="text" class="form-control" placeholder="e.g., My Test Key">
+                                </div>
+                                <button class="btn btn-primary" onclick="generateAPIKey()">
+                                    <i class="bi bi-key"></i> Generate API Key (POST)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="auth-response" class="mt-4"></div>
+
+                        <hr class="my-4">
+
+                        <h5>Active API Keys</h5>
+                        <button class="btn btn-sm btn-info" onclick="listAPIKeys()">
+                            <i class="bi bi-list"></i> List All Keys
+                        </button>
+                        <div id="keys-list" class="mt-3"></div>
+                    </div>
+
+                    <!-- Export Tab -->
+                    <div id="export" class="tab-pane fade">
+                        <h5>Export Data</h5>
+                        <p class="text-muted">Export data in CSV, Excel, or JSON format.</p>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Select Data Source</label>
+                                    <select id="export-source" class="form-select">
+                                        <option value="customers">Customers</option>
+                                        <option value="tickets">Support Tickets</option>
+                                        <option value="analytics">Analytics</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Format</label>
+                                    <select id="export-format" class="form-select">
+                                        <option value="csv">CSV</option>
+                                        <option value="excel">Excel</option>
+                                        <option value="json">JSON</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="exportData()">
+                            <i class="bi bi-download"></i> Export Data (POST)
+                        </button>
+
+                        <div id="export-response" class="mt-4"></div>
+                    </div>
+
+                    <!-- Webhooks Tab -->
+                    <div id="webhooks" class="tab-pane fade">
+                        <h5>Webhook Management</h5>
+                        <p class="text-muted">Register webhooks to receive event notifications.</p>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Webhook URL</label>
+                                    <input id="webhook-url" type="url" class="form-control" 
+                                           placeholder="https://example.com/webhook">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Webhook Name</label>
+                                    <input id="webhook-name" type="text" class="form-control" 
+                                           placeholder="My Webhook">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Subscribe to Events</label>
+                            <div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="event-data_updated" value="data_updated">
+                                    <label class="form-check-label" for="event-data_updated">Data Updated</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="event-export_completed" value="export_completed">
+                                    <label class="form-check-label" for="event-export_completed">Export Completed</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="event-rate_limit" value="rate_limit">
+                                    <label class="form-check-label" for="event-rate_limit">Rate Limit Hit</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary" onclick="registerWebhook()">
+                            <i class="bi bi-link"></i> Register Webhook (POST)
+                        </button>
+
+                        <div id="webhook-response" class="mt-4"></div>
+
+                        <hr class="my-4">
+
+                        <h5>Active Webhooks</h5>
+                        <button class="btn btn-sm btn-info" onclick="listWebhooks()">
+                            <i class="bi bi-list"></i> List All Webhooks
+                        </button>
+                        <div id="webhooks-list" class="mt-3"></div>
+                    </div>
+
+                    <!-- Cache Management Tab -->
+                    <div id="cache" class="tab-pane fade">
+                        <h5>Cache Management</h5>
+                        <p class="text-muted">Monitor and manage the Redis caching layer.</p>
+
+                        <div class="btn-group mb-4">
+                            <button class="btn btn-info" onclick="getCacheStats()">
+                                <i class="bi bi-info-circle"></i> Cache Stats
+                            </button>
+                            <button class="btn btn-warning" onclick="clearAllCache()">
+                                <i class="bi bi-trash"></i> Clear All Cache
+                            </button>
+                        </div>
+
+                        <div id="cache-response" class="mt-4"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documentation -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-book"></i> Bonus Features Documentation</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>🚀 Available Features</h6>
+                        <ul class="feature-list">
+                            <li><strong>Redis Caching:</strong> Frequently accessed data is automatically cached for 1 hour</li>
+                            <li><strong>Rate Limiting:</strong> 100 requests per minute per API key or IP address</li>
+                            <li><strong>Authentication:</strong> API key-based authentication for all endpoints</li>
+                            <li><strong>Webhooks:</strong> Real-time event notifications to registered URLs</li>
+                            <li><strong>Data Export:</strong> Export data as CSV, Excel, or JSON</li>
+                            <li><strong>Intelligent Query:</strong> Natural language query processing with LLM fallback</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>📚 Quick Links</h6>
+                        <ul class="feature-list">
+                            <li><a href="/docs" target="_blank">Swagger Documentation</a></li>
+                            <li><a href="/redoc" target="_blank">ReDoc Documentation</a></li>
+                            <li><a href="/openapi.json" target="_blank">OpenAPI Schema</a></li>
+                            <li><a href="/health" target="_blank">Health Check Endpoint</a></li>
+                            <li><a href="/api/health" target="_blank">API Health Check</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = window.location.origin;
+        let currentApiKey = localStorage.getItem('apiKey') || '';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateApiKeyDisplay();
+            checkHealth();
+            // Don't auto-fetch cache stats - wait for user to click button
+        });
+
+        // API Key Management
+        function saveApiKey() {
+            const keyInput = document.getElementById('api-key-input');
+            currentApiKey = keyInput.value.trim();
+            if (currentApiKey) {
+                localStorage.setItem('apiKey', currentApiKey);
+                updateApiKeyDisplay();
+                showToast('API Key saved successfully');
+                console.log('API Key saved:', currentApiKey.substring(0, 15) + '...');
+            } else {
+                clearApiKey();
+            }
+        }
+
+        function clearApiKey() {
+            currentApiKey = '';
+            localStorage.removeItem('apiKey');
+            document.getElementById('api-key-input').value = '';
+            updateApiKeyDisplay();
+            console.log('API Key cleared');
+        }
+
+        function updateApiKeyDisplay() {
+            const statusDiv = document.getElementById('key-status');
+            const input = document.getElementById('api-key-input');
+            
+            if (currentApiKey) {
+                statusDiv.innerHTML = `<span class="badge bg-success">API Key Set: ${currentApiKey.substring(0, 15)}...</span>`;
+                input.value = currentApiKey;
+            } else {
+                statusDiv.innerHTML = `<span class="badge bg-warning">No API Key Set</span>`;
+            }
+        }
+
+        function getAuthHeaders() {
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            if (currentApiKey) {
+                headers['Authorization'] = `Bearer ${currentApiKey}`;
+                console.log('Using API Key:', currentApiKey.substring(0, 15) + '...');
+            } else {
+                console.warn('No API key set');
+            }
+            return headers;
+        }
+
+        async function fetchWithAuth(url, options = {}) {
+            const headers = getAuthHeaders();
+            if (options.headers) {
+                Object.assign(headers, options.headers);
+            }
+            
+            console.log(`Fetching ${url} with auth:`, !!currentApiKey);
+            
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers,
+                    credentials: 'same-origin'
+                });
+                
+                if (response.status === 401 || response.status === 403) {
+                    console.error('Authentication failed:', response.status);
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                }
+                
+                return response;
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error;
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            console.log(`[${type}] ${message}`);
+            // You can enhance this with a proper toast notification
+        }
+
+        // Health Check
+        async function checkHealth() {
+            try {
+                console.log('Checking health...');
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                console.log('Health check response:', data);
+                document.getElementById('auth-status').className = 
+                    data.authentication ? 'status-badge enabled' : 'status-badge disabled';
+            } catch (error) {
+                console.error('Health check failed:', error);
+            }
+        }
+
+        // Fetch Data
+        async function fetchData() {
+            const source = document.getElementById('data-source').value;
+            const limit = document.getElementById('data-limit').value;
+            const responseDiv = document.getElementById('data-response');
+
+            responseDiv.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+
+            try {
+                if (!currentApiKey) {
+                    throw new Error('Please enter your API key first');
+                }
+
+                const endpoint = `${API_BASE}/api/data/${source}?limit=${limit}`;
+                console.log('Fetching data from:', endpoint);
+                
+                const response = await fetchWithAuth(endpoint);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+
+                responseDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6>Response (${response.status})</h6>
+                        <div class="response-box">${JSON.stringify(data, null, 2)}</div>
+                    </div>
+                `;
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Generate API Key
+        async function generateAPIKey() {
+            const name = document.getElementById('key-name').value || 'Web UI Key';
+            const responseDiv = document.getElementById('auth-response');
+
+            responseDiv.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+
+            try {
+                console.log('Generating API key for:', name);
+                const response = await fetch(
+                    `${API_BASE}/api/auth/generate-key?name=${encodeURIComponent(name)}`,
+                    { method: 'POST' }
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('API key generated successfully');
+
+                responseDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6>✅ API Key Generated</h6>
+                        <p><strong>Name:</strong> ${data.name}</p>
+                        <p><strong>Created:</strong> ${data.created_at}</p>
+                        <p><strong>Rate Limit:</strong> ${data.rate_limit}</p>
+                        <p><strong>Key:</strong></p>
+                        <div class="api-key-display">${data.api_key}</div>
+                        <button class="btn btn-sm btn-primary mt-2" onclick="copyToClipboard('${data.api_key}')">
+                            <i class="bi bi-clipboard"></i> Copy Key
+                        </button>
+                        <small class="text-muted mt-2 d-block">⚠️ Save this key securely. You won't be able to see it again.</small>
+                    </div>
+                `;
+                document.getElementById('key-name').value = '';
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // List API Keys
+        async function listAPIKeys() {
+            const responseDiv = document.getElementById('keys-list');
+            responseDiv.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+
+            try {
+                if (!currentApiKey) {
+                    throw new Error('Please enter your API key first');
+                }
+
+                console.log('Listing API keys...');
+                const response = await fetchWithAuth(`${API_BASE}/api/auth/keys`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('API keys response:', data);
+
+                if (!data.keys || data.keys.length === 0) {
+                    responseDiv.innerHTML = '<p class="text-muted">No API keys generated yet.</p>';
+                } else {
+                    let html = '<table class="table table-sm"><thead><tr><th>Preview</th><th>Name</th><th>Created</th><th>Last Used</th><th>Rate Limit</th></tr></thead><tbody>';
+                    data.keys.forEach(key => {
+                        html += `<tr>
+                            <td><code>${key.key_preview || key.key?.substring(0, 15) + '...'}</code></td>
+                            <td>${key.name}</td>
+                            <td>${new Date(key.created_at).toLocaleString()}</td>
+                            <td>${key.last_used ? new Date(key.last_used).toLocaleString() : 'Never'}</td>
+                            <td>${key.rate_limit}</td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    responseDiv.innerHTML = html;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            }
+        }
+
+        // Export Data
+        async function exportData() {
+            const source = document.getElementById('export-source').value;
+            const format = document.getElementById('export-format').value;
+            const responseDiv = document.getElementById('export-response');
+
+            responseDiv.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+
+            try {
+                if (!currentApiKey) {
+                    throw new Error('Please enter your API key first');
+                }
+
+                const endpoint = `${API_BASE}/api/export/${source}?format=${format}`;
+                console.log('Exporting data from:', endpoint);
+                
+                const response = await fetchWithAuth(endpoint, { method: 'POST' });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                if (format === 'json') {
+                    const data = await response.json();
+                    responseDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <h6>✅ Export Successful</h6>
+                            <p>Records: ${data.record_count || data.length || 'N/A'}</p>
+                            <div class="response-box">${JSON.stringify(data, null, 2)}</div>
+                        </div>
+                    `;
+                } else {
+                    const filename = `${source}_export.${format === 'excel' ? 'xlsx' : 'csv'}`;
+                    
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+
+                    responseDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle"></i> File downloaded: ${filename}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Register Webhook
+        async function registerWebhook() {
+            const url = document.getElementById('webhook-url').value;
+            const name = document.getElementById('webhook-name').value || 'Web UI Webhook';
+            const events = Array.from(document.querySelectorAll('input[id^="event-"]:checked'))
+                .map(el => el.value);
+
+            if (!url || events.length === 0) {
+                alert('Please provide webhook URL and select at least one event');
+                return;
+            }
+
+            const responseDiv = document.getElementById('webhook-response');
+            responseDiv.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+
+            try {
+                if (!currentApiKey) {
+                    throw new Error('Please enter your API key first');
+                }
+
+                const response = await fetchWithAuth(`${API_BASE}/api/webhooks/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, events, name })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+
+                responseDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6>✅ Webhook Registered</h6>
+                        <p><strong>ID:</strong> ${data.webhook_id || data.id}</p>
+                        <p><strong>URL:</strong> ${data.url}</p>
+                        <p><strong>Events:</strong> ${data.events.join(', ')}</p>
+                        <p><strong>Status:</strong> ${data.status || 'active'}</p>
+                    </div>
+                `;
+                
+                // Clear form
+                document.getElementById('webhook-url').value = '';
+                document.getElementById('webhook-name').value = '';
+                document.querySelectorAll('input[id^="event-"]').forEach(el => el.checked = false);
+                
+                // Refresh list
+                listWebhooks();
+            } catch (error) {
+                responseDiv.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            }
+        }
+
+        // List Webhooks
+        async function listWebhooks() {
+            const responseDiv = document.getElementById('webhooks-list');
+            responseDiv.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+
+            try {
+                if (!currentApiKey) {
+                    throw new Error('Please enter your API key first');
+                }
+
+                const response = await fetchWithAuth(`${API_BASE}/api/webhooks`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                const webhooks = data.webhooks || data || [];
+
+                if (webhooks.length === 0) {
+                    responseDiv.innerHTML = '<p class="text-muted">No webhooks registered yet.</p>';
+                } else {
+                    let html = '<table class="table table-sm"><thead><tr><th>Name</th><th>URL</th><th>Events</th><th>Deliveries</th></tr></thead><tbody>';
+                    webhooks.forEach(wh => {
+                        html += `<tr>
+                            <td>${wh.name || 'Unnamed'}</td>
+                            <td><small>${wh.url}</small></td>
+                            <td><small>${(wh.events || []).join(', ')}</small></td>
+                            <td>${wh.delivery_count || wh.success_count || 0}</td>
+                        </tr>`;
+                    });
+                    html += '</tbody></table>';
+                    responseDiv.innerHTML = html;
+                }
+            } catch (error) {
+                responseDiv.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            }
+        }
+
+        // Cache Stats
+        async function getCacheStats() {
+            const responseDiv = document.getElementById('cache-response');
+            responseDiv.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+
+            try {
+                if (!currentApiKey) {
+                    throw new Error('Please enter your API key first');
+                }
+
+                console.log('Fetching cache stats...');
+                const response = await fetchWithAuth(`${API_BASE}/api/cache/stats`);
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        throw new Error('Authentication failed. Please check your API key.');
+                    }
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Cache stats response:', data);
+
+                responseDiv.innerHTML = `
+                    <div class="alert alert-info">
+                        <h6>📊 Cache Statistics</h6>
+                        <p><strong>Enabled:</strong> ${data.enabled ? '✓ Yes' : '✗ No'}</p>
+                        <p><strong>Redis Connected:</strong> ${data.redis_connected ? '✓ Yes' : '✗ No'}</p>
+                        <p><strong>Fallback Cache Size:</strong> ${data.fallback_cache_size || 0}</p>
+                        <p><strong>TTL:</strong> ${data.ttl} seconds</p>
+                        ${data.redis ? `
+                            <hr>
+                            <p><strong>Redis Memory:</strong> ${data.redis.used_memory}</p>
+                            <p><strong>Redis Clients:</strong> ${data.redis.connected_clients}</p>
+                            <p><strong>Total Keys:</strong> ${data.redis.total_keys}</p>
+                        ` : ''}
+                    </div>
+                `;
+                
+                // Update status badge
+                document.getElementById('cache-status').className = 
+                    data.enabled ? 'status-badge enabled' : 'status-badge disabled';
+            } catch (error) {
+                console.error('Cache stats error:', error);
+                responseDiv.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            }
+        }
+
+        // Clear All Cache
+        async function clearAllCache() {
+            if (!confirm('Clear all cache? This cannot be undone.')) return;
+
+            const responseDiv = document.getElementById('cache-response');
+            responseDiv.innerHTML = '<div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div>';
+
+            try {
+                if (!currentApiKey) {
+                    throw new Error('Please enter your API key first');
+                }
+
+                console.log('Clearing cache...');
+                const response = await fetchWithAuth(`${API_BASE}/api/cache/clear`, { method: 'DELETE' });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('Clear cache response:', data);
+
+                responseDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6>✅ Cache Cleared</h6>
+                        <p>${data.message || 'Cache cleared successfully'}</p>
+                    </div>
+                `;
+                
+                // Refresh stats
+                setTimeout(getCacheStats, 1000);
+            } catch (error) {
+                console.error('Clear cache error:', error);
+                responseDiv.innerHTML = `<div class="alert alert-danger">${error.message}</div>`;
+            }
+        }
+
+        // Clear Response
+        function clearResponse(elementId) {
+            document.getElementById(elementId).innerHTML = '';
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('API key copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
+    </script>
+</body>
+</html>

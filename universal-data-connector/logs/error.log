@@ -1,0 +1,29 @@
+2026-02-17 06:45:15 - app.services.llm_service - ERROR - OpenAI rate limit exceeded: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-02-17 06:45:15 - app.services.query_executor - ERROR - LLM call failed: Rate limit exceeded. Try again later.
+2026-02-17 06:47:07 - app.services.llm_service - ERROR - OpenAI rate limit exceeded: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-02-17 06:47:07 - app.services.query_executor - ERROR - LLM call failed: Rate limit exceeded. Try again later.
+2026-02-17 06:50:06 - app.services.llm_service - ERROR - OpenAI rate limit exceeded: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-02-17 06:50:06 - app.services.query_executor - ERROR - LLM call failed: Rate limit exceeded. Try again later.
+2026-02-17 06:55:22 - app.services.llm_service - ERROR - OpenAI rate limit exceeded: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-02-17 06:55:22 - app.services.query_executor - ERROR - LLM call failed: Rate limit exceeded. Try again later.
+2026-02-17 07:07:05 - app.services.llm_service - ERROR - Gemini error: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-02-17 07:07:05 - app.services.query_executor - ERROR - LLM call failed: Query failed: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-02-17 07:08:08 - app.services.llm_service - ERROR - Gemini error: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-02-17 07:08:08 - app.services.query_executor - ERROR - LLM call failed: Query failed: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-02-17 07:08:27 - app.services.llm_service - ERROR - Gemini error: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-02-17 07:08:27 - app.services.query_executor - ERROR - LLM call failed: Query failed: 404 models/gemini-1.5-flash is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-02-17 07:11:18 - app.services.llm_service - ERROR - Gemini error: 404 models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-02-17 07:11:18 - app.services.query_executor - ERROR - LLM call failed: Query failed: 404 models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+2026-02-20 06:54:55 - app.routers.bonus - ERROR - Error exporting customers: 'CRMConnector' object has no attribute 'get_all_data'
+2026-02-20 06:57:13 - app.routers.bonus - ERROR - Error exporting customers: 'CRMConnector' object has no attribute 'get_all_data'
+2026-02-20 07:08:17 - app.routers.bonus - ERROR - Error exporting customers: 'BusinessRulesEngine' object has no attribute 'apply_rules'
+2026-02-20 07:19:47 - app.routers.bonus - ERROR - Error exporting customers: 'CRMConnector' object has no attribute 'get_all_data'
+2026-02-20 07:22:12 - app.routers.bonus - ERROR - Error exporting customers: 'CRMConnector' object has no attribute 'get_all_data'
+2026-02-20 12:27:44 - app.routers.bonus - ERROR - Error generating API key: 1 validation error for APIKeyResponse
+rate_limit
+  Input should be a valid string [type=string_type, input_value=1000, input_type=int]
+    For further information visit https://errors.pydantic.dev/2.12/v/string_type
+2026-02-20 12:38:10 - app.services.query_executor - ERROR - Error executing simple query: object of type 'coroutine' has no len()
+2026-02-20 12:38:37 - app.routers.data - ERROR - Error fetching customers: object of type 'coroutine' has no len()
+2026-02-20 12:45:49 - app.routers.data - ERROR - Error fetching customers: object of type 'coroutine' has no len()
+2026-02-20 12:49:58 - app.routers.data - ERROR - Error processing query: object dict can't be used in 'await' expression

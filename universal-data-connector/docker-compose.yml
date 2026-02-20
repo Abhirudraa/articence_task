@@ -1,0 +1,56 @@
+
+version: '3.9'
+
+services:
+  redis:
+    image: redis:7-alpine
+    hostname: redis
+    container_name: udc_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    environment:
+      - REDIS_SAVE=""
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - udc_network
+
+  api:
+    build: .
+    container_name: udc_api
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_ENABLED=true
+      - REDIS_URL=redis://redis:6379/0
+      - CACHE_ENABLED=true
+      - RATE_LIMIT_ENABLED=true
+      - AUTH_ENABLED=true
+      - WEBHOOK_ENABLED=true
+      - EXPORT_ENABLED=true
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    networks:
+      - udc_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  udc_network:
+    driver: bridge
